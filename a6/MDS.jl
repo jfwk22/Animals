@@ -46,14 +46,18 @@ function stress(z,D)
 end
 
 function ISOMAP(X)
-
+	#Compute all Distances
 	(n,d) = size(X)
 	k=2
 	D = distancesSquared(X,X)
+	D = sqrt.(abs.(D))
 	
 
+	#Set distance to oneself to be infinity (so it doesn't get picked as a neighbour)
+	D += diagm(fill(Inf,n))
 	
-	adjm = fill(Inf, (n,n))
+	#Find neighbours
+	adjm = fill(Inf, n,n)
 
 	for i in 1:n
 		near = sortperm(D[:,i])
@@ -63,6 +67,7 @@ function ISOMAP(X)
 
 	end
 	
+	#Replace distances with geodesic distances - Modification for disconnected graph
 	x=0
 
 	for i in 1:n
